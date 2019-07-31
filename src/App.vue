@@ -1,18 +1,44 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>Todos</h1>
+    <input type="text" v-model="todoName" @keyup.enter="addTodo">
+    <ul>
+      <li v-for="todo of todos" :key="todo.id">
+        {{ todo.title}}
+      </li>
+    </ul>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import axios from "axios";
+
+const baseURL = "https://jsonplaceholder.typicode.com/todos?_limit=5"
 
 export default {
   name: 'app',
+  data(){
+    return{
+      todos: [],
+      todoname: ''
+    }
+  },
   components: {
-    HelloWorld
+  },
+  created(){
+    axios.get(baseURL)
+    .then(res=> this.todos = res.data)
+    .catch(err => console.log(err))
+  },
+  methods: {
+    addTodo(newTodo){
+      const title = newTodo;
+        axios.post(baseURL, title)
+        .then(res => this.todos = [...this.todos, newTodo])
+        .catch(err => console.log(err))
+    }
   }
+
 }
 </script>
 
